@@ -1,5 +1,21 @@
 import os
+
+from pathlib import Path
 from markdown_blocks import markdown_to_html_node
+
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    os.makedirs(dest_dir_path, exist_ok=True)
+    for filename in sorted(os.listdir(dir_path_content)):  # Sorting for consistency
+        from_path = os.path.join(dir_path_content, filename)
+        dest_path = os.path.join(dest_dir_path, filename)
+        if filename.startswith(".") or filename.endswith(":Zone.Identifier"):
+            continue
+        if os.path.isfile(from_path):
+            dest_path = Path(dest_path).with_suffix(".html")
+            generate_page(from_path, template_path, dest_path)
+        else:
+            generate_pages_recursive(from_path, template_path, dest_path)
+
 
 
 def generate_page(from_path, template_path, dest_path):
